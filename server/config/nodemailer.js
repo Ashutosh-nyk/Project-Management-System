@@ -1,0 +1,24 @@
+import nodemalier from 'nodemailer';
+
+
+const transporter = nodemalier.createTransport({
+    host:"smtp-relay.brevo.com",
+    post:587,
+    auth:{
+        user:process.env.SMTP_USER,
+        pass:process.env.SMTP_PASS,
+    },
+});
+
+const sendEmail = async ({to, subject , body}) => {
+ const response = await transporter.sendMail({
+    from:process.env.SENDER_EMAIL,
+    to,
+    subject,
+    text:"Hello world?",
+    html: body,
+});
+return response
+}
+
+export default sendEmail
