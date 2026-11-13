@@ -126,7 +126,7 @@ const syncWorkspaceDeletion = inngest.createFunction(
 
 const syncWorkspaceMemberCreation = inngest.createFunction(
     { id: 'sync-workspace-member-from-clerk' },
-    { event: 'clerk/organizationInvitation.created' },
+    { event: 'clerk/organizationMembership.created' },
     async ({ event }) => {
         const { data } = event;
         await prisma.workspaceMember.create({
@@ -180,19 +180,19 @@ const sendTaskAssignmentEmail = inngest.createFunction(
                         </div>`
         })
 
-        if(new Date(task.due_date).toLocaleDateString() !== new Date().toLocaleDateString()){
+        if (new Date(task.due_date).toLocaleDateString() !== new Date().toLocaleDateString()) {
             await step.sleepUntil('wait-for-the-due-date', new Date(task.due_date));
 
-            await step.run('check-if-task-is-completed', async()=> {
+            await step.run('check-if-task-is-completed', async () => {
                 const task = await prisma.task.findUnique({
-                    where:{id: taskId},
-                    include: {assignee:true , project:true}
+                    where: { id: taskId },
+                    include: { assignee: true, project: true }
                 })
-                if(!task) return;
+                if (!task) return;
 
-                if(task.status !== "DONE"){
+                if (task.status !== "DONE") {
                     await step.run('send-task-reminder-mail', async () => {
-                        await sendEmail ({
+                        await sendEmail({
                             to: task.assignee.email,
                             subject: `Reminder for ${task.project.name}`,
                             body: `<div style="max-width:600px;">

@@ -23,7 +23,7 @@ export const createProject = async (req, res) => {
 
 
         //Get Team Lead using email
-        const teamLead = await prisma.findUnique({
+        const teamLead = await prisma.user.findUnique({
             where: { email: team_lead },
             select: { id: true }
         })
