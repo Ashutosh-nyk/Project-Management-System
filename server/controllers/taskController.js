@@ -32,6 +32,7 @@ export const createTask = async (req, res) => {
                 priority,
                 assigneeId,
                 status,
+                type,
                 due_date: new Date(due_date)
             }
         })
@@ -89,7 +90,7 @@ export const updateTask = async (req, res) => {
         })
 
 
-        res.json({ task: taskWithAssignee, message: "Task updated successfully" })
+        res.json({ task: updatetask, message: "Task updated successfully" })
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: error.code || error.message });

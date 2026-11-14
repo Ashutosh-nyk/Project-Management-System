@@ -3,6 +3,7 @@ import { dummyWorkspaces } from "../assets/assets";
 import api from "../configs/api";
 
 
+
 export const fetchWorkspace = createAsyncThunk('workspace/fetchWorkspace', async ({ getToken }) => {
         try {
             const { data } = await api.get('/api/workspaces', { headers: { Authorization: `Bearer ${await getToken()}` } })

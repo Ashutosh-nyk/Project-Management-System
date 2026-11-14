@@ -5,7 +5,7 @@ import prisma from "../config/prisma.js";
 export const createProject = async (req, res) => {
     try {
         const { userId } = await req.auth();
-        const { workspaceId, description, name, status, start_date, end_date, team_member, team_lead, progress, priority } = req.body;
+      const { workspaceId, description, name, status, start_date, end_date, team_members, team_lead, progress, priority } = req.body;
 
         //check if user has admin role for workspace
         const workspace = await prisma.workspace.findUnique({
@@ -44,10 +44,10 @@ export const createProject = async (req, res) => {
 
         // Add member to project if they are in the workspace
 
-        if (team_member?.length > 0) {
+        if (team_members?.length > 0) {
             const memberToAdd = []
             workspace.members.forEach(member => {
-                if (team_member.includes(member.user.email)) {
+                if (team_members.includes(member.user.email)) {
                     memberToAdd.push(member.user.id)
                 }
             })
@@ -140,7 +140,7 @@ export const addMember = async (req, res) => {
         //check if user is  project lead
         const project = await prisma.project.findUnique({
             where: { id: projectId },
-            include: { member: { include: { user: true } } }
+            include: { members: { include: { user: true } } }
         })
 
         if (!project) {
@@ -151,7 +151,7 @@ export const addMember = async (req, res) => {
         }
 
         // Check if user is alredy a member
-        const existingMember = project.member.find((member) => member.email === email)
+        const existingMember = project.members.find((member) => member.user.email === email)
 
         if (existingMember) {
             return res.status(400).json({ message: "User is already a member" });
